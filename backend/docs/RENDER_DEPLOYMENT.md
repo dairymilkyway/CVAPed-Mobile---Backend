@@ -53,7 +53,7 @@ Copy the output and use it as `FIREBASE_SERVICE_ACCOUNT_JSON_BASE64`.
 5. Dockerfile Path: `./backend/Dockerfile`
 6. Docker Context: `./backend`
 7. Instance Type: **Starter** recommended.
-8. Health Check Path: `/healthz`
+8. Health Check Path: `/readyz`
 
 ## 4. Required Render environment variables
 
@@ -89,13 +89,11 @@ Render will build `backend/Dockerfile`, start the container, and expose port `80
 Replace `<render-url>` with your Render public URL.
 
 ```bash
-curl https://<render-url>/healthz
 curl https://<render-url>/readyz
 curl https://<render-url>/
 ```
 
 Expected:
-- `/healthz` returns `success: true`
 - `/readyz` returns `ready: true`
 - `/` returns API metadata
 
@@ -129,6 +127,5 @@ You are production-ready when all of these are true:
 - Old secrets rotated
 - New secrets added in Render
 - Deploy succeeds
-- `/healthz` passes
 - `/readyz` passes
 - Core auth/upload/assessment flows succeed against the live URL

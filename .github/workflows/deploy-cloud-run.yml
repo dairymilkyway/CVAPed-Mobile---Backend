@@ -59,10 +59,10 @@ jobs:
             --cpu 1 \
             --timeout 300 \
             --max-instances 3 \
-            --set-env-vars NODE_ENV=production,FLASK_ENV=production,USE_GLOBAL_PYTHON=true,PORT=8080,GAIT_ANALYSIS_PORT=5001,THERAPY_PORT=5002,CORS_ORIGINS=${{ secrets.CORS_ORIGINS }},MONGODB_URI=${{ secrets.MONGODB_URI }},DB_NAME=${{ secrets.DB_NAME }},JWT_SECRET=${{ secrets.JWT_SECRET }},SECRET_KEY=${{ secrets.JWT_SECRET }},GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }},CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }},CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }},CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }},AZURE_SPEECH_KEY=${{ secrets.AZURE_SPEECH_KEY }},AZURE_SPEECH_REGION=${{ secrets.AZURE_SPEECH_REGION }},FIREBASE_SERVICE_ACCOUNT_JSON_BASE64=${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 }}
+            --set-env-vars NODE_ENV=production,FLASK_ENV=production,USE_GLOBAL_PYTHON=true,GAIT_ANALYSIS_PORT=5001,THERAPY_PORT=5002,CORS_ORIGINS=${{ secrets.CORS_ORIGINS }},MONGODB_URI=${{ secrets.MONGODB_URI }},DB_NAME=${{ secrets.DB_NAME }},JWT_SECRET=${{ secrets.JWT_SECRET }},SECRET_KEY=${{ secrets.JWT_SECRET }},GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }},CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }},CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }},CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }},AZURE_SPEECH_KEY=${{ secrets.AZURE_SPEECH_KEY }},AZURE_SPEECH_REGION=${{ secrets.AZURE_SPEECH_REGION }},FIREBASE_SERVICE_ACCOUNT_JSON_BASE64=${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 }}
 
       - name: Smoke test
         run: |
           SERVICE_URL=$(gcloud run services describe ${{ env.SERVICE }} --region ${{ env.REGION }} --format='value(status.url)')
-          curl --fail "$SERVICE_URL/healthz"
           curl --fail "$SERVICE_URL/readyz"
+          curl --fail "$SERVICE_URL/"

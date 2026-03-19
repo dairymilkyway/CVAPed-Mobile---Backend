@@ -5,9 +5,19 @@ Uses Decision Rules + Graph-Based Recommendations for prescriptive analysis
 
 import os
 import sys
+import collections
+import collections.abc
 from pymongo import MongoClient
 from datetime import datetime, timedelta
 import networkx as nx
+
+if not hasattr(collections, 'Mapping'):
+    setattr(collections, 'Mapping', collections.abc.Mapping)
+if not hasattr(collections, 'MutableMapping'):
+    setattr(collections, 'MutableMapping', collections.abc.MutableMapping)
+if not hasattr(collections, 'Sequence'):
+    setattr(collections, 'Sequence', collections.abc.Sequence)
+
 from experta import *
 import numpy as np
 from collections import defaultdict

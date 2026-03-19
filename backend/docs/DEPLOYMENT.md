@@ -7,7 +7,6 @@ Set these environment variables on your hosting platform:
 - `NODE_ENV=production`
 - `FLASK_ENV=production`
 - `USE_GLOBAL_PYTHON=true`
-- `PORT=8080`
 - `GAIT_ANALYSIS_PORT=5001`
 - `THERAPY_PORT=5002`
 - `MONGODB_URI`
@@ -34,8 +33,8 @@ node start.js
 
 ## Health checks
 
-- `GET /healthz` -> process health
-- `GET /readyz` -> database + internal Python dependency readiness
+- `GET /readyz` -> primary deployment health check (database + internal Python dependency readiness)
+- `GET /` -> basic API liveness check
 - `GET /api/gait/health` -> gait service health
 - `GET /api/therapy/health` -> therapy service health
 
