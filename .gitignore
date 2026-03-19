@@ -17,7 +17,6 @@ backend/firebase-adminsdk-*.json
 backend/config/serviceAccountKey.json
 
 # Frontend
-frontend/
 frontend/node_modules/
 frontend/.expo/
 frontend/dist/

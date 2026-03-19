@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "CVAPed",
+    "slug": "cvacare",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/CVAPed_Text_square.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cvaped.mobile"
+    },
+    "android": {
+      "package": "com.cvaped.mobile",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/CVAPed_Text_foreground.png",
+        "backgroundColor": "#ffffff"
+      },
+      "icon": "./assets/CVAPed_Text_square.png",
+      "edgeToEdgeEnabled": true,
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-av",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share success stories.",
+          "cameraPermission": "The app accesses your camera to let you take photos for success stories."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "6021682e-b63f-49d4-95f0-ac9f3a36c134"
+      }
+    }
+  }
+}
