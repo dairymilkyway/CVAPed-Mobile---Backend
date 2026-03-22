@@ -22,9 +22,6 @@ env:
   GCP_REGION: us-central1
   CLOUD_RUN_SERVICE: cvacare-backend
   ARTIFACT_REPOSITORY: backend-images
-  GCP_SERVICE_ACCOUNT: cvaped-backend-actions@project-75d04eb0-a4d7-4d9c-849.iam.gserviceaccount.com
-  GCP_WORKLOAD_IDENTITY_PROVIDER: projects/526387613359/locations/global/workloadIdentityPools/cvaped-backend-pool/providers/github-provider
-  CLOUD_RUN_RUNTIME_SERVICE_ACCOUNT: 526387613359-compute@developer.gserviceaccount.com
   IMAGE_NAME: cvacare-backend
 
 jobs:
@@ -39,9 +36,7 @@ jobs:
         id: auth
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: ${{ env.GCP_WORKLOAD_IDENTITY_PROVIDER }}
-          service_account: ${{ env.GCP_SERVICE_ACCOUNT }}
-          token_format: access_token
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
 
       - name: Set up gcloud SDK
         uses: google-github-actions/setup-gcloud@v2
