@@ -11,16 +11,6 @@ env:
   REGION: us-central1
   SERVICE: cvacare-backend
   WORKDIR: backend
-  DB_NAME: ${{ secrets.DB_NAME }}
-  JWT_SECRET: ${{ secrets.JWT_SECRET }}
-  CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
-  GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-  CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
-  CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
-  CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
-  AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
-  AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
-  FIREBASE_SERVICE_ACCOUNT_JSON_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 }}
 
 jobs:
   deploy:
@@ -32,6 +22,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v5
+
+      - name: Validate required auth secrets
+        run: |
+          [ -n "${{ secrets.WORKLOAD_IDENTITY_PROVIDER }}" ] || { echo "Missing WORKLOAD_IDENTITY_PROVIDER"; exit 1; }
+          [ -n "${{ secrets.GCP_SERVICE_ACCOUNT }}" ] || { echo "Missing GCP_SERVICE_ACCOUNT"; exit 1; }
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
@@ -59,6 +54,18 @@ jobs:
             --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/backend-images/${{ env.SERVICE }}:${{ github.sha }}
 
       - name: Deploy to Cloud Run
+        env:
+          DB_NAME: ${{ secrets.DB_NAME }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          CORS_ORIGINS: ${{ secrets.CORS_ORIGINS }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+          AZURE_SPEECH_KEY: ${{ secrets.AZURE_SPEECH_KEY }}
+          AZURE_SPEECH_REGION: ${{ secrets.AZURE_SPEECH_REGION }}
+          FIREBASE_SERVICE_ACCOUNT_JSON_BASE64: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
         run: |
           gcloud run deploy ${{ env.SERVICE }} \
             --image ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/backend-images/${{ env.SERVICE }}:${{ github.sha }} \
@@ -70,24 +77,24 @@ jobs:
             --cpu 1 \
             --timeout 300 \
             --max-instances 3 \
-            --command /bin/sh -- -c "/usr/local/bin/patch-frozendict.sh && node start.js" \
+            --command /bin/sh --args "-c,/usr/local/bin/patch-frozendict.sh && node start.js" \
             --set-env-vars "NODE_ENV=production" \
             --set-env-vars "FLASK_ENV=production" \
             --set-env-vars "USE_GLOBAL_PYTHON=true" \
             --set-env-vars "GAIT_ANALYSIS_PORT=5001" \
             --set-env-vars "THERAPY_PORT=5002" \
-            --set-env-vars "CORS_ORIGINS=${{ env.CORS_ORIGINS }}" \
-            --set-env-vars "MONGODB_URI=${{ secrets.MONGODB_URI }}" \
-            --set-env-vars "DB_NAME=${{ env.DB_NAME }}" \
-            --set-env-vars "JWT_SECRET=${{ env.JWT_SECRET }}" \
-            --set-env-vars "SECRET_KEY=${{ env.JWT_SECRET }}" \
-            --set-env-vars "GOOGLE_CLIENT_ID=${{ env.GOOGLE_CLIENT_ID }}" \
-            --set-env-vars "CLOUDINARY_CLOUD_NAME=${{ env.CLOUDINARY_CLOUD_NAME }}" \
-            --set-env-vars "CLOUDINARY_API_KEY=${{ env.CLOUDINARY_API_KEY }}" \
-            --set-env-vars "CLOUDINARY_API_SECRET=${{ env.CLOUDINARY_API_SECRET }}" \
-            --set-env-vars "AZURE_SPEECH_KEY=${{ env.AZURE_SPEECH_KEY }}" \
-            --set-env-vars "AZURE_SPEECH_REGION=${{ env.AZURE_SPEECH_REGION }}" \
-            --set-env-vars "FIREBASE_SERVICE_ACCOUNT_JSON_BASE64=${{ env.FIREBASE_SERVICE_ACCOUNT_JSON_BASE64 }}"
+            --set-env-vars "CORS_ORIGINS=${CORS_ORIGINS}" \
+            --set-env-vars "MONGODB_URI=${MONGODB_URI}" \
+            --set-env-vars "DB_NAME=${DB_NAME}" \
+            --set-env-vars "JWT_SECRET=${JWT_SECRET}" \
+            --set-env-vars "SECRET_KEY=${JWT_SECRET}" \
+            --set-env-vars "GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}" \
+            --set-env-vars "CLOUDINARY_CLOUD_NAME=${CLOUDINARY_CLOUD_NAME}" \
+            --set-env-vars "CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}" \
+            --set-env-vars "CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}" \
+            --set-env-vars "AZURE_SPEECH_KEY=${AZURE_SPEECH_KEY}" \
+            --set-env-vars "AZURE_SPEECH_REGION=${AZURE_SPEECH_REGION}" \
+            --set-env-vars "FIREBASE_SERVICE_ACCOUNT_JSON_BASE64=${FIREBASE_SERVICE_ACCOUNT_JSON_BASE64}"
 
       - name: Smoke test
         run: |
